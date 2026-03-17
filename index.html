@@ -7,58 +7,47 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', system-ui, sans-serif; background: #F3F4F6; color: #111827; min-height: 100vh; }
-
   .header { background: #4F46E5; color: #fff; padding: 18px 32px; display: flex; align-items: center; gap: 14px; }
-  .header-icon { font-size: 32px; }
   .header h1 { font-size: 22px; font-weight: 700; }
   .header p { font-size: 13px; opacity: .75; margin-top: 2px; }
-
   .tabs { display: flex; background: #fff; border-bottom: 1px solid #E5E7EB; padding: 0 32px; }
-  .tab { padding: 14px 20px; cursor: pointer; border: none; border-bottom: 2px solid transparent; background: none; font-size: 14px; color: #6B7280; font-weight: 500; font-family: inherit; transition: all .15s; }
+  .tab { padding: 14px 20px; cursor: pointer; border: none; border-bottom: 2px solid transparent; background: none; font-size: 14px; color: #6B7280; font-weight: 500; font-family: inherit; }
   .tab.active { border-bottom-color: #4F46E5; color: #4F46E5; font-weight: 700; }
-  .tab:hover:not(.active) { color: #374151; }
-
   .body { padding: 32px; max-width: 960px; margin: 0 auto; }
   .panel { display: none; }
   .panel.active { display: block; }
-
   .card { background: #fff; border-radius: 12px; border: 1px solid #E5E7EB; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
-  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
   .card-sub { font-size: 13px; color: #6B7280; margin-bottom: 20px; line-height: 1.5; }
-
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
   .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field.full { grid-column: 1 / -1; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
   label { font-size: 13px; font-weight: 600; color: #374151; }
   label span { font-weight: 400; color: #9CA3AF; }
-
-  input[type=text], select, textarea {
-    width: 100%; padding: 10px 14px; border-radius: 8px;
-    border: 1.5px solid #E5E7EB; font-size: 14px; font-family: inherit;
-    outline: none; transition: border .15s; background: #fff; color: #111827;
+  input[type=text], input[type=email], input[type=password], select, textarea {
+    width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid #E5E7EB;
+    font-size: 14px; font-family: inherit; outline: none; transition: border .15s; background: #fff; color: #111827;
   }
-  input[type=text]:focus, select:focus, textarea:focus { border-color: #4F46E5; box-shadow: 0 0 0 3px rgba(79,70,229,.08); }
+  input:focus, select:focus, textarea:focus { border-color: #4F46E5; box-shadow: 0 0 0 3px rgba(79,70,229,.08); }
   textarea { resize: vertical; min-height: 180px; line-height: 1.6; }
   select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-
   .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 20px; flex-wrap: wrap; }
-  .btn { padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: all .15s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn { padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; display: inline-flex; align-items: center; gap: 8px; }
   .btn-primary { background: #4F46E5; color: #fff; }
   .btn-primary:hover { background: #4338CA; }
   .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
   .btn-outline { background: #fff; color: #4F46E5; border: 1.5px solid #4F46E5; }
   .btn-outline:hover { background: #EEF2FF; }
   .btn-danger { background: #fff; color: #DC2626; border: 1.5px solid #DC2626; }
-  .btn-danger:hover { background: #FEF2F2; }
-
   .notice { border-radius: 8px; padding: 12px 16px; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
   .notice-warn { background: #FFFBEB; border: 1px solid #FCD34D; color: #92400E; }
   .notice-success { background: #ECFDF5; border: 1px solid #6EE7B7; color: #065F46; }
   .notice-danger { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
   .notice-info { background: #EEF2FF; border: 1px solid #C7D2FE; color: #3730A3; }
-
-  /* Results */
+  .status-ok { font-size: 12px; color: #059669; margin-top: 4px; }
+  .status-err { font-size: 12px; color: #DC2626; margin-top: 4px; }
+  .status-info { font-size: 12px; color: #6B7280; margin-top: 4px; }
+  .divider { border: none; border-top: 1px solid #F3F4F6; margin: 20px 0; }
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
   .stat-box { border-radius: 12px; padding: 18px 20px; }
   .stat-box .num { font-size: 28px; font-weight: 800; }
@@ -66,48 +55,36 @@
   .stat-primary { background: #EEF2FF; border: 1px solid #C7D2FE; color: #4F46E5; }
   .stat-success { background: #ECFDF5; border: 1px solid #6EE7B7; color: #059669; }
   .stat-danger { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; }
-
-  .result-card { background: #fff; border-radius: 12px; border: 1px solid #E5E7EB; padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .result-card { background: #fff; border-radius: 12px; border: 1px solid #E5E7EB; padding: 18px 20px; margin-bottom: 12px; }
   .result-card.eligible { border-left: 5px solid #059669; }
   .result-card.not-eligible { border-left: 5px solid #DC2626; }
   .result-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
   .result-id { font-weight: 700; font-size: 16px; }
   .result-meta { font-size: 13px; color: #6B7280; margin-top: 3px; }
   .result-reason { font-size: 14px; line-height: 1.6; color: #374151; margin-bottom: 8px; }
-  .result-rule { font-size: 12px; color: #6B7280; background: #F9FAFB; border-radius: 6px; padding: 4px 10px; display: inline-block; }
-
+  .result-tag { font-size: 12px; color: #6B7280; background: #F9FAFB; border-radius: 6px; padding: 4px 10px; display: inline-block; margin-top: 4px; margin-right: 4px; }
   .badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 99px; font-size: 13px; font-weight: 600; }
   .badge-eligible { background: #ECFDF5; color: #059669; }
   .badge-not { background: #FEF2F2; color: #DC2626; }
-
   .empty-state { text-align: center; padding: 48px; color: #9CA3AF; }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state p { font-size: 15px; }
-
-  .divider { border: none; border-top: 1px solid #F3F4F6; margin: 20px 0; }
-
-  .loading-bar { display: none; align-items: center; gap: 12px; color: #4F46E5; font-size: 14px; font-weight: 500; padding: 12px 0; }
+  .loading-bar { display: none; align-items: center; gap: 12px; color: #4F46E5; font-size: 14px; font-weight: 500; padding: 14px 0; }
   .spinner { width: 20px; height: 20px; border: 2px solid #C7D2FE; border-top-color: #4F46E5; border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .last-run { font-size: 12px; color: #9CA3AF; text-align: right; margin-top: 12px; }
-
-  /* Insights */
   .insights-text { font-size: 14px; line-height: 1.8; white-space: pre-wrap; color: #374151; }
-  .insight-section { margin-bottom: 16px; }
-
+  .sop-badge { display: inline-block; background: #EEF2FF; color: #4F46E5; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 600; margin: 2px; }
   @media (max-width: 640px) {
     .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr; }
     .body { padding: 16px; }
-    .tabs { padding: 0 16px; }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-icon">🎯</div>
+  <div style="font-size:32px">🎯</div>
   <div>
     <h1>CSAT Scrub Review Tool</h1>
     <p>AI-powered DSAT eligibility evaluator — Flex Internal</p>
@@ -115,31 +92,59 @@
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('review')">Review</button>
-  <button class="tab" onclick="switchTab('results')">Results <span id="results-count" style="background:#EEF2FF;color:#4F46E5;border-radius:99px;padding:1px 8px;font-size:11px;margin-left:4px;display:none">0</span></button>
-  <button class="tab" onclick="switchTab('rules')">Scrub Rules</button>
+  <button class="tab active" onclick="switchTab('setup')">⚙️ Setup</button>
+  <button class="tab" onclick="switchTab('review')">🎫 Review</button>
+  <button class="tab" onclick="switchTab('results')">📋 Results <span id="results-count" style="background:#EEF2FF;color:#4F46E5;border-radius:99px;padding:1px 8px;font-size:11px;margin-left:4px;display:none">0</span></button>
+  <button class="tab" onclick="switchTab('rules')">📖 Scrub Rules</button>
 </div>
 
 <div class="body">
 
-  <!-- REVIEW TAB -->
-  <div id="panel-review" class="panel active">
-
-          <div class="field">
+  <!-- SETUP -->
+  <div id="panel-setup" class="panel active">
+    <div class="card">
+      <div class="card-title">🔗 Confluence Connection</div>
+      <div class="card-sub">Connect to your Atlassian account to pull SOPs in real time during analysis. Credentials are session-only and never stored.</div>
+      <div class="form-grid">
+        <div class="field">
           <label>Atlassian Email</label>
-          <input type="email" id="atl-email" placeholder="you@getflex.com" oninput="updateSetupStatus()" />
+          <input type="email" id="atl-email" placeholder="you@getflex.com" oninput="onCredentialChange()" />
         </div>
         <div class="field">
           <label>Atlassian API Token</label>
-          <input type="password" id="atl-token" placeholder="Paste your Atlassian API token..." style="font-family:monospace" oninput="updateSetupStatus(); sopIndex = null;" />
+          <input type="password" id="atl-token" placeholder="Paste your Atlassian API token..." style="font-family:monospace" oninput="onCredentialChange()" />
         </div>
-        <div id="atl-status"></div>
-        <div id="sop-load-status" style="font-size:12px;color:#6B7280;margin-top:6px"></div>
       </div>
+      <div id="atl-status"></div>
+      <div id="sop-index-status" class="status-info"></div>
+      <div style="margin-top:12px">
+        <button class="btn btn-outline" id="btn-load-sops" onclick="loadSopIndex(true)" disabled>📚 Load SOP Index</button>
+      </div>
+    </div>
 
-      <div class="card">
+    <div class="card">
+      <div class="card-title">📋 Scrubbing Rules</div>
+      <div class="card-sub">Pre-loaded from your Flex DSAT Scrubbing Overview. Edit if needed.</div>
+      <div class="field">
+        <textarea id="rules-text" rows="14"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✅ Setup Status</div>
+      <div id="setup-checklist"></div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div id="panel-review" class="panel">
+    <div id="review-warn" class="notice notice-warn" style="display:none">
+      ⚠️ Confluence credentials not set. Go to <strong>Setup</strong> first for SOP-informed analysis.
+    </div>
+
+    <div class="card">
       <div class="card-title">🎫 Ticket Information</div>
-      <div class="card-sub">Fill in the ticket details below. The more information you provide in the conversation field, the more accurate the scrub recommendation will be.</div>
+      <div class="card-sub">Fill in the details below. The category selections and conversation content will be used to identify which SOPs apply to this ticket.</div>
 
       <div class="form-grid-3">
         <div class="field">
@@ -179,7 +184,7 @@
           </select>
         </div>
         <div class="field">
-          <label>Category (U) <span>— User category</span></label>
+          <label>Category (U) <span>— User/issue category</span></label>
           <select id="cat-u">
             <option value="">— Select —</option>
             <option>Account Management and Status</option>
@@ -202,32 +207,29 @@
 
       <div class="field">
         <label>Ticket Conversation <span>— Paste the full ticket thread here</span></label>
-        <textarea id="ticket-convo" rows="10" placeholder="Paste the full ticket conversation here — include all messages between the customer and agent, any internal notes, and the resolution status. The more detail you include, the more accurate the recommendation."></textarea>
+        <textarea id="ticket-convo" rows="10" placeholder="Paste the full ticket conversation here — all messages between agent and customer, internal notes, and resolution status. The more detail provided, the more accurate the recommendation."></textarea>
       </div>
 
-      <div class="field" style="margin-top:16px">
-        <label>Additional Notes <span>— Optional context for the reviewer</span></label>
-        <input type="text" id="extra-notes" placeholder="e.g. Ticket was flagged as incident-related, agent was following EPF protocol..." />
+      <div class="field">
+        <label>Additional Notes <span>— Optional context</span></label>
+        <input type="text" id="extra-notes" placeholder="e.g. Ticket flagged as incident-related, agent was following EPF protocol..." />
       </div>
 
       <div id="review-error" class="notice notice-danger" style="display:none;margin-top:16px"></div>
+      <div id="sop-match-info" style="display:none;margin-top:12px;padding:10px 14px;background:#EEF2FF;border-radius:8px;font-size:13px;color:#3730A3"></div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" id="btn-analyze" onclick="analyzeTicket()">
-          🔍 Analyze for Scrub Eligibility
-        </button>
+        <button class="btn btn-primary" id="btn-analyze" onclick="analyzeTicket()">🔍 Analyze for Scrub Eligibility</button>
         <button class="btn btn-outline" onclick="clearForm()">Clear Form</button>
       </div>
-
       <div class="loading-bar" id="loading-bar">
         <div class="spinner"></div>
-        <span id="loading-text">Analyzing ticket against scrub rules...</span>
+        <span id="loading-text">Analyzing...</span>
       </div>
     </div>
-
   </div>
 
-  <!-- RESULTS TAB -->
+  <!-- RESULTS -->
   <div id="panel-results" class="panel">
     <div id="results-empty" class="card empty-state">
       <div class="icon">📭</div>
@@ -240,7 +242,7 @@
         <div class="stat-box stat-danger"><div class="num" id="stat-not">0</div><div class="lbl">Not Eligible</div></div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div style="font-size:14px;color:#6B7280">Session results — cleared when you close the tab</div>
+        <div style="font-size:13px;color:#6B7280">Session results — cleared when you close the tab</div>
         <div style="display:flex;gap:10px">
           <button class="btn btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
           <button class="btn btn-danger" onclick="clearResults()">🗑 Clear All</button>
@@ -251,12 +253,11 @@
     </div>
   </div>
 
-  <!-- RULES TAB -->
+  <!-- RULES -->
   <div id="panel-rules" class="panel">
     <div class="card">
       <div class="card-title">✅ Valid Scrub Scenarios</div>
-      <div class="card-sub">These are the only cases where a DSAT can be scrubbed. Each must be supported with clear evidence.</div>
-
+      <div class="card-sub">The only cases where a DSAT can be scrubbed. Each must be supported with clear evidence.</div>
       <div style="display:flex;flex-direction:column;gap:16px;font-size:14px;line-height:1.7">
         <div style="background:#F0FDF4;border-radius:10px;padding:16px;border:1px solid #BBF7D0">
           <div style="font-weight:700;color:#065F46;margin-bottom:8px">1. Customer Did Not Get a Proper Chance to Interact</div>
@@ -288,17 +289,16 @@
         <div style="background:#F0FDF4;border-radius:10px;padding:16px;border:1px solid #BBF7D0">
           <div style="font-weight:700;color:#065F46;margin-bottom:8px">4. Exempted or Specialized Teams Only</div>
           <ul style="padding-left:18px;color:#374151;display:flex;flex-direction:column;gap:4px">
-            <li>Partner Care (PC), Eviction Prevention Force (EPF), Income Verification (IV), Disputes, AI Outreach, TL Escalation</li>
+            <li>Partner Care (PC), EPF, Income Verification (IV), Disputes, AI Outreach, TL Escalation</li>
             <li>Known product/tool limitation and agent accurately explained or followed up</li>
-            <li>DSAT says "not resolved" but agent provided clear next steps and received no reply after follow-up</li>
+            <li>DSAT says "not resolved" but agent provided clear next steps and received no reply</li>
           </ul>
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">🚫 Do Not Scrub</div>
-      <div class="card-sub">These situations must never be scrubbed, even if the agent had positive intentions.</div>
+      <div class="card-sub">These must never be scrubbed, even if the agent had positive intentions.</div>
       <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.7">
         <div style="background:#FEF2F2;border-radius:10px;padding:16px;border:1px solid #FECACA">
           <div style="font-weight:700;color:#991B1B;margin-bottom:8px">1. DSAT Has No Comment or Blank Feedback</div>
@@ -325,31 +325,9 @@
 </div>
 
 <script>
+// ─── Config ────────────────────────────────────────────────────────────────
 const PROXY = "https://zendesk-proxy.adam-167.workers.dev";
 const SOP_TRACKER_PAGE_ID = "1625128966";
-
-// Category → keywords to match SOP titles
-const CAT_SOP_MAP = {
-  "Complaints": ["complaint", "escalation", "deescalation", "high-pain"],
-  "Disputes": ["dispute", "disputed payment", "chargeback"],
-  "Self-Submit": ["sign-up", "onboarding", "denied application"],
-  "Variable Credit Line": ["variable credit", "credit line"],
-  "Service Members": ["active duty", "scra", "mla", "service member"],
-  "Price Increase": ["pricing", "rent pricing", "price"],
-  "Up to Half": ["split payment", "reschedule payment"],
-  "Bill Payment Fee": ["bill payment", "membership fee", "mmf"],
-  "Regulation Monitoring": ["regulation b", "regulation e", "regulation z", "glba", "reg p", "fdcpa", "fcra"],
-  "Other": ["escalation", "sla", "merging tickets", "tooling"],
-  "Account Management and Status": ["account management", "account status", "suspension", "reactivation", "canceling", "duplicate", "updating customer", "email", "phone", "name", "address", "payment method"],
-  "App Feedback or Issue": ["app issue", "app feedback", "handling app"],
-  "Manage My Payments to Flex": ["missed payment", "make or process", "refund", "reschedule", "split payment", "revoke auth", "rollover", "membership fee", "flex funds"],
-  "Property & Resident Portal": ["add property", "cannot connect", "property"],
-  "Rent Payment to Property": ["rent payment", "bp issue", "how to check rent", "p2p", "billing services"],
-  "Signing Up": ["sign-up", "onboarding", "denied application", "income verification", "account verification"],
-  "Account Security and Privacy": ["identity theft", "fraud", "pii", "data privacy", "dsar", "deleting", "e-sign", "tcpa"],
-};
-
-let sopIndex = null; // Cache of all SOP page titles+ids
 
 const RULES = `DSAT SCRUBBING PROCESS – Flex
 
@@ -359,8 +337,8 @@ VALID SCRUB SCENARIOS:
 - Email bounced, undelivered, or customer never saw reply and stated this in their DSAT
 - Customer claimed to have replied but no further messages received (verify thoroughly)
 - Agent has no touch on ticket; only auto-reassigned under solved/pending status
-- Blank tickets: abandoned calls with no content, SPAM, non-English inquiries where non-English macro was sent and customer never replied, tickets that only say "help" or have unclear/no issue, tickets with no Flex account attached where AV is needed
-- Phone Support: agent took all steps to contact customer but call did not go through and customer sent DSAT
+- Blank tickets: abandoned calls, SPAM, non-English where macro was sent and no reply, tickets saying only "help" or no clear issue, no Flex account + AV needed
+- Phone Support: agent took all steps but call did not go through
 
 2. Customer Submitted a DSAT by Mistake
 - Customer clearly refers to another company or product unrelated to Flex
@@ -368,37 +346,206 @@ VALID SCRUB SCENARIOS:
 
 3. Customer DSAT is Misaligned
 - Customer leaves negative rating but feedback is overwhelmingly positive
-- Feedback directed at company/product but customer clearly states agent provided great service
-- DSAT due to communication preference only and agent followed SOP
+- Feedback directed at company/product but customer states agent provided great service
+- DSAT due to communication preference only (language, phone vs email) and agent followed SOP
 - AI-driven DSAT — scrub ONLY if evidence is clear and unambiguous
 
 4. Exempted or Specialized Teams Only (agent must have handled case correctly)
 - Partner Care (PC), EPF, Income Verification (IV), Disputes, AI Outreach, TL Escalation
 - Known product/tool limitation and agent accurately explained or followed up
-- DSAT says "not resolved" but agent provided clear next steps, escalated as required, received no reply
+- DSAT says "not resolved" but agent provided clear next steps, escalated, received no reply
 
 DO NOT SCRUB:
-1. DSAT Has No Comment or Blank Feedback (unless customer later clarifies it was a mistake)
+1. DSAT Has No Comment or Blank Feedback (unless customer later clarifies mistake)
 2. Agent Contributed to the Negative Experience:
-- Incorrect or misleading information
-- Failure to de-escalate
-- Unclear or dismissive messaging
-- Failure to follow SOPs or escalate
-- Solving issue without replying when customer is upset
-- Cold/unprofessional tone
-- Issue tagged solved prematurely
-- Any Customer Impact or AV/Regulation fails
+   - Incorrect or misleading information
+   - Failure to de-escalate
+   - Unclear or dismissive messaging
+   - Failure to follow SOPs or escalate
+   - Solving issue without replying when customer is upset
+   - Cold/unprofessional tone
+   - Issue tagged solved prematurely
+   - Any Customer Impact or AV/Regulation fails
 
-GENERAL: When in doubt, do not scrub. 7-day cutoff from DSAT received.`;
+When in doubt: Do Not Scrub. 7-day cutoff from DSAT received.`;
 
+// ─── State ─────────────────────────────────────────────────────────────────
 let results = [];
+let sopIndex = null; // { pages: [{id, title}] }
 
+// ─── Init ──────────────────────────────────────────────────────────────────
+document.getElementById('rules-text').value = RULES;
+renderSetupChecklist();
+
+// ─── Tab switching ─────────────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
-  [...document.querySelectorAll('.tab')].find(t => t.textContent.trim().toLowerCase().startsWith(name))?.classList.add('active');
+  [...document.querySelectorAll('.tab')].find(t => t.textContent.toLowerCase().includes(name))?.classList.add('active');
+  if (name === 'review') checkReviewWarnings();
   if (name === 'results') renderResults();
+}
+
+// ─── Setup ─────────────────────────────────────────────────────────────────
+function onCredentialChange() {
+  const email = document.getElementById('atl-email').value.trim();
+  const token = document.getElementById('atl-token').value.trim();
+  const btn = document.getElementById('btn-load-sops');
+  btn.disabled = !(email && token);
+  document.getElementById('atl-status').innerHTML = (email && token)
+    ? '<div class="status-ok">✅ Credentials entered — click "Load SOP Index" to connect</div>' : '';
+  sopIndex = null;
+  document.getElementById('sop-index-status').textContent = '';
+  renderSetupChecklist();
+}
+
+function renderSetupChecklist() {
+  const email = document.getElementById('atl-email').value.trim();
+  const token = document.getElementById('atl-token').value.trim();
+  const rules = document.getElementById('rules-text').value.trim();
+  const items = [
+    ['Atlassian Email', email],
+    ['Atlassian API Token', token],
+    ['SOP Index Loaded', sopIndex ? sopIndex.length + ' SOPs' : ''],
+    ['Scrubbing Rules', rules],
+  ];
+  document.getElementById('setup-checklist').innerHTML = items.map(([lbl, val]) =>
+    `<div style="display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:8px">
+      <span style="font-size:18px">${val ? '✅' : '⬜'}</span>
+      <span style="color:${val ? '#111' : '#6B7280'}">${lbl}${val && lbl === 'SOP Index Loaded' ? ` <span style="color:#6B7280;font-size:12px">(${val})</span>` : ''}</span>
+    </div>`
+  ).join('') + (email && token && sopIndex
+    ? '<div class="notice notice-success" style="margin-top:12px">✅ Fully connected — head to <strong>Review</strong> to analyze tickets.</div>'
+    : '');
+}
+
+// ─── SOP Index ─────────────────────────────────────────────────────────────
+async function loadSopIndex(manual = false) {
+  const email = document.getElementById('atl-email').value.trim();
+  const token = document.getElementById('atl-token').value.trim();
+  if (!email || !token) return null;
+  if (sopIndex && !manual) return sopIndex;
+
+  const statusEl = document.getElementById('sop-index-status');
+  const btn = document.getElementById('btn-load-sops');
+  statusEl.textContent = '⏳ Loading SOP index from Confluence...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'confluence_children',
+        pageId: SOP_TRACKER_PAGE_ID,
+        atlassianEmail: email,
+        atlassianToken: token
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    sopIndex = data.pages;
+    statusEl.innerHTML = `<span class="status-ok">✅ ${sopIndex.length} SOPs indexed successfully</span>`;
+    renderSetupChecklist();
+    return sopIndex;
+  } catch(e) {
+    statusEl.innerHTML = `<span class="status-err">❌ Failed: ${e.message}</span>`;
+    return null;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ─── SOP Matching ──────────────────────────────────────────────────────────
+function findRelevantSops(catA, catU, conversation, dsatComment) {
+  if (!sopIndex) return [];
+
+  // Build keyword list from categories + conversation content
+  const textToSearch = `${catA} ${catU} ${dsatComment} ${conversation}`.toLowerCase();
+
+  // Score each SOP by keyword relevance
+  const scored = sopIndex.map(page => {
+    const title = page.title.toLowerCase();
+    let score = 0;
+
+    // Direct title word matches with conversation/categories
+    const titleWords = title.replace(/[^a-z0-9 ]/g, ' ').split(' ').filter(w => w.length > 3);
+    titleWords.forEach(word => { if (textToSearch.includes(word)) score += 2; });
+
+    // Category A keyword boosts
+    const catAKeywords = {
+      'Complaints': ['complaint', 'escalat', 'deescalat', 'high-pain', 'high pain', 'abusive'],
+      'Disputes': ['disput', 'chargeback', 'unauthorized'],
+      'Self-Submit': ['sign-up', 'signup', 'onboard', 'denied', 'application'],
+      'Variable Credit Line': ['variable credit', 'credit line', 'credit utilization'],
+      'Service Members': ['active duty', 'scra', 'mla', 'service member', 'military'],
+      'Price Increase': ['pricing', 'rent pricing', 'price increase', 'price change'],
+      'Up to Half': ['split payment', 'reschedule', 'up to half'],
+      'Bill Payment Fee': ['bill payment', 'membership fee', 'mmf', 'card processing'],
+      'Regulation Monitoring': ['regulation b', 'regulation e', 'regulation z', 'glba', 'reg p', 'fdcpa', 'fcra', 'tcpa'],
+      'Other': ['escalation', 'sla', 'merging tickets', 'tooling', 'phone support'],
+    };
+
+    // Category U keyword boosts
+    const catUKeywords = {
+      'Account Management and Status': ['account manag', 'account status', 'suspension', 'reactivat', 'cancel', 'duplicate', 'updating customer', 'email', 'phone number', 'name', 'address', 'payment method', 'autopay'],
+      'App Feedback or Issue': ['app issue', 'app feedback', 'app problem', 'handling app'],
+      'Manage My Payments to Flex': ['missed payment', 'make or process', 'refund', 'reschedule', 'split payment', 'revoke auth', 'rollover', 'membership fee', 'flex funds', 'payment'],
+      'Property & Resident Portal': ['add property', 'cannot connect', 'property', 'portal'],
+      'Rent Payment to Property': ['rent payment', 'bp issue', 'rent status', 'p2p', 'billing services', 'fulfillment'],
+      'Signing Up': ['sign-up', 'signup', 'onboard', 'denied application', 'income verification', 'account verification'],
+      'Account Security and Privacy': ['identity theft', 'fraud', 'pii', 'data privacy', 'dsar', 'delet', 'e-sign', 'tcpa', 'security'],
+    };
+
+    const aKeys = catAKeywords[catA] || [];
+    const uKeys = catUKeywords[catU] || [];
+    [...aKeys, ...uKeys].forEach(kw => { if (title.includes(kw)) score += 5; });
+
+    // Always include escalation/deescalation SOPs
+    if (title.includes('escalat') || title.includes('deescalat') || title.includes('sla')) score += 3;
+
+    return { ...page, score };
+  });
+
+  // Return top matches with score > 0, capped at 6
+  return scored
+    .filter(p => p.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6);
+}
+
+async function fetchSopContents(pages) {
+  const email = document.getElementById('atl-email').value.trim();
+  const token = document.getElementById('atl-token').value.trim();
+  const contents = [];
+
+  for (const page of pages) {
+    try {
+      const res = await fetch(PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'confluence',
+          pageId: page.id,
+          atlassianEmail: email,
+          atlassianToken: token
+        })
+      });
+      const data = await res.json();
+      if (data.title && data.text) {
+        contents.push(`=== SOP: ${data.title} ===\n${data.text.slice(0, 2500)}`);
+      }
+    } catch(e) { /* skip failed pages silently */ }
+  }
+  return contents.join('\n\n');
+}
+
+// ─── Review helpers ────────────────────────────────────────────────────────
+function checkReviewWarnings() {
+  const email = document.getElementById('atl-email').value.trim();
+  const token = document.getElementById('atl-token').value.trim();
+  document.getElementById('review-warn').style.display = (email && token) ? 'none' : '';
 }
 
 function showError(msg) {
@@ -408,13 +555,19 @@ function showError(msg) {
 }
 
 function setLoading(on, msg = '') {
-  const bar = document.getElementById('loading-bar');
-  const btn = document.getElementById('btn-analyze');
-  bar.style.display = on ? 'flex' : 'none';
-  btn.disabled = on;
+  document.getElementById('loading-bar').style.display = on ? 'flex' : 'none';
+  document.getElementById('btn-analyze').disabled = on;
   if (msg) document.getElementById('loading-text').textContent = msg;
 }
 
+function clearForm() {
+  ['ticket-id','agent-name','dsat-comment','ticket-convo','extra-notes'].forEach(id => document.getElementById(id).value = '');
+  ['csat-score','cat-a','cat-u'].forEach(id => document.getElementById(id).selectedIndex = 0);
+  document.getElementById('sop-match-info').style.display = 'none';
+  showError('');
+}
+
+// ─── Main analysis ─────────────────────────────────────────────────────────
 async function analyzeTicket() {
   const id = document.getElementById('ticket-id').value.trim();
   const agent = document.getElementById('agent-name').value.trim();
@@ -427,25 +580,35 @@ async function analyzeTicket() {
 
   if (!convo) { showError('Please paste the ticket conversation before analyzing.'); return; }
   showError('');
+  document.getElementById('sop-match-info').style.display = 'none';
+
+  // Step 1: Ensure SOP index is loaded
   setLoading(true, 'Loading SOP index from Confluence...');
+  if (!sopIndex) await loadSopIndex();
 
-  // Step 1: Load SOP index
-  const index = await loadSopIndex();
-
-  // Step 2: Find relevant SOP page IDs based on categories
+  // Step 2: Find relevant SOPs using categories + conversation content
   let sopContext = '';
-  if (index) {
-    const pageIds = getRelevantPageIds(catA, catU);
-    if (pageIds.length) {
-      setLoading(true, `Fetching ${pageIds.length} relevant SOPs from Confluence...`);
-      sopContext = await fetchSopContent(pageIds);
+  let matchedSops = [];
+  if (sopIndex) {
+    setLoading(true, 'Identifying relevant SOPs for this ticket...');
+    matchedSops = findRelevantSops(catA, catU, convo, comment);
+
+    if (matchedSops.length) {
+      setLoading(true, `Fetching ${matchedSops.length} relevant SOPs from Confluence...`);
+      sopContext = await fetchSopContents(matchedSops);
+
+      // Show which SOPs were pulled
+      const infoEl = document.getElementById('sop-match-info');
+      infoEl.innerHTML = `<strong>📚 ${matchedSops.length} SOPs loaded for this analysis:</strong><br><br>` +
+        matchedSops.map(p => `<span class="sop-badge">${p.title}</span>`).join('');
+      infoEl.style.display = 'block';
     }
   }
 
+  // Step 3: Run analysis
   setLoading(true, 'Analyzing ticket against scrub rules and SOPs...');
 
-  const ticketSummary = `
-Ticket ID: ${id || 'Not provided'}
+  const ticketSummary = `Ticket ID: ${id || 'Not provided'}
 Agent: ${agent || 'Not provided'}
 CSAT Score: ${score || 'Not provided'}
 Category (A): ${catA || 'Not provided'}
@@ -454,18 +617,19 @@ Customer DSAT Comment: ${comment || 'None provided'}
 Additional Notes: ${notes || 'None'}
 
 --- Ticket Conversation ---
-${convo}`.trim();
+${convo}`;
 
-  const systemPrompt = `You are a CSAT scrub eligibility reviewer for a customer support team called Flex.
-Evaluate the ticket and determine if the DSAT should be scrubbed.
+  const systemPrompt = `You are a CSAT scrub eligibility reviewer for Flex, a customer support team.
 
-You have two knowledge sources:
-1. SCRUB RULES — the criteria for what can and cannot be scrubbed
-2. FLEX SOPs — the actual procedures agents are required to follow
+Your job is to evaluate whether a DSAT (low satisfaction rating) should be scrubbed from an agent's score.
 
-Use both to evaluate whether the agent followed correct procedure and whether the DSAT qualifies for scrubbing.
+You have two sources of information:
+1. SCRUB RULES — the specific criteria for what can and cannot be scrubbed
+2. FLEX SOPs — the actual procedures agents are required to follow for this ticket type
 
-Return ONLY valid JSON — no markdown, no explanation outside the JSON:
+Evaluate BOTH whether the scrub criteria apply AND whether the agent followed the correct SOP procedure. Reference specific SOP steps where relevant.
+
+Return ONLY valid JSON — no markdown, no text outside the JSON:
 {
   "ticketId": "string",
   "agentName": "string",
@@ -474,15 +638,15 @@ Return ONLY valid JSON — no markdown, no explanation outside the JSON:
   "categoryU": "string",
   "eligible": true or false,
   "verdict": "Eligible" or "Not Eligible",
-  "reason": "2-3 sentences referencing the specific rule and SOP context that supports the decision",
+  "reason": "2-3 sentences referencing the specific scrub rule and any relevant SOP steps that informed the decision",
   "matchedRule": "Name of the scrub rule that applies, or None",
-  "sopReferenced": "Name of the SOP(s) used in the evaluation, or None"
+  "sopReferenced": "Names of the SOPs that informed this decision, or None"
 }
 
 SCRUB RULES:
-${RULES}
+${document.getElementById('rules-text').value}
 
-${sopContext ? `RELEVANT FLEX SOPs:\n${sopContext}` : 'No SOPs loaded — evaluate based on scrub rules only.'}`;
+${sopContext ? `RELEVANT FLEX SOPs (use these to evaluate whether the agent followed correct procedure):\n\n${sopContext}` : 'No SOPs loaded — evaluate based on scrub rules only.'}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -490,16 +654,17 @@ ${sopContext ? `RELEVANT FLEX SOPs:\n${sopContext}` : 'No SOPs loaded — evalua
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 1024,
         system: systemPrompt,
-        messages: [{ role: 'user', content: `Please evaluate this ticket for scrub eligibility:\n\n${ticketSummary}` }]
+        messages: [{ role: 'user', content: `Evaluate this ticket:\n\n${ticketSummary}` }]
       })
     });
-
     const data = await res.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     const text = data.content.map(b => b.text || '').join('').replace(/```json|```/g, '').trim();
     const result = JSON.parse(text);
     result.timestamp = new Date().toLocaleString();
+    result.sopsBadges = matchedSops.map(p => p.title);
     results.unshift(result);
     updateResultsCount();
     setLoading(false);
@@ -510,12 +675,7 @@ ${sopContext ? `RELEVANT FLEX SOPs:\n${sopContext}` : 'No SOPs loaded — evalua
   }
 }
 
-function clearForm() {
-  ['ticket-id','agent-name','dsat-comment','ticket-convo','extra-notes'].forEach(id => document.getElementById(id).value = '');
-  ['csat-score','cat-a','cat-u'].forEach(id => document.getElementById(id).selectedIndex = 0);
-  showError('');
-}
-
+// ─── Results ───────────────────────────────────────────────────────────────
 function updateResultsCount() {
   const el = document.getElementById('results-count');
   if (results.length) { el.textContent = results.length; el.style.display = ''; }
@@ -532,15 +692,15 @@ function renderResults() {
   document.getElementById('stat-eligible').textContent = eligible;
   document.getElementById('stat-not').textContent = results.length - eligible;
   document.getElementById('last-run').textContent = 'Last updated: ' + new Date().toLocaleString();
-  document.getElementById('results-list').innerHTML = results.map((r, i) => `
+  document.getElementById('results-list').innerHTML = results.map(r => `
     <div class="result-card ${r.eligible ? 'eligible' : 'not-eligible'}">
       <div class="result-header">
         <div>
           <div class="result-id">Ticket #${r.ticketId || '—'}</div>
           <div class="result-meta">
             ${r.agentName ? `Agent: ${r.agentName}` : ''}
-            ${r.categoryA ? ` · Category A: ${r.categoryA}` : ''}
-            ${r.categoryU ? ` · Category U: ${r.categoryU}` : ''}
+            ${r.categoryA ? ` · Cat A: ${r.categoryA}` : ''}
+            ${r.categoryU ? ` · Cat U: ${r.categoryU}` : ''}
             ${r.csatScore ? ` · CSAT: ${r.csatScore}/5` : ''}
           </div>
         </div>
@@ -549,8 +709,11 @@ function renderResults() {
         </span>
       </div>
       <div class="result-reason">${r.reason}</div>
-      ${r.matchedRule && r.matchedRule !== 'None' ? `<div class="result-rule">📌 Rule: ${r.matchedRule}</div>` : ''}
-      ${r.sopReferenced && r.sopReferenced !== 'None' ? `<div class="result-rule" style="margin-top:4px">📖 SOP: ${r.sopReferenced}</div>` : ''}
+      <div>
+        ${r.matchedRule && r.matchedRule !== 'None' ? `<span class="result-tag">📌 ${r.matchedRule}</span>` : ''}
+        ${r.sopReferenced && r.sopReferenced !== 'None' ? `<span class="result-tag">📖 ${r.sopReferenced}</span>` : ''}
+      </div>
+      ${r.sopsBadges?.length ? `<div style="margin-top:8px">${r.sopsBadges.map(s => `<span class="sop-badge">${s}</span>`).join('')}</div>` : ''}
       <div style="font-size:11px;color:#9CA3AF;margin-top:8px">${r.timestamp || ''}</div>
     </div>`).join('');
 }
@@ -562,47 +725,27 @@ function clearResults() {
 }
 
 function exportCSV() {
-  const header = ['Ticket ID','Agent','CSAT Score','Category A','Category U','Verdict','Matched Rule','Reason','Timestamp'];
+  const header = ['Ticket ID','Agent','CSAT Score','Category A','Category U','Verdict','Matched Rule','SOP Referenced','Reason','Timestamp'];
   const rows = results.map(r => [
-    r.ticketId || '',
-    r.agentName || '',
-    r.csatScore ?? '',
-    r.categoryA || '',
-    r.categoryU || '',
-    r.verdict || '',
-    r.matchedRule || '',
-    (r.reason || '').replace(/"/g, "'"),
-    r.timestamp || ''
+    r.ticketId || '', r.agentName || '', r.csatScore ?? '',
+    r.categoryA || '', r.categoryU || '', r.verdict || '',
+    r.matchedRule || '', r.sopReferenced || '',
+    (r.reason || '').replace(/"/g, "'"), r.timestamp || ''
   ]);
-  const csv = [header, ...rows]
-    .map(row => row.map(cell => `"${String(cell).replace(/"/g, "'")}" `).join(','))
-    .join('\r\n');
-
+  const csv = [header, ...rows].map(row => row.map(c => `"${String(c).replace(/"/g,"'")}"`).join(',')).join('\r\n');
   try {
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';
-    a.href = url;
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
     a.download = 'csat-scrub-' + new Date().toISOString().slice(0,10) + '.csv';
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
+    document.body.removeChild(a);
   } catch(e) {
-    // Fallback: show copyable text in a div
-    const existing = document.getElementById('csv-fallback');
-    if (existing) existing.remove();
     const div = document.createElement('div');
-    div.id = 'csv-fallback';
-    div.style.cssText = 'margin-top:16px;padding:16px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;font-family:monospace;font-size:12px;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto';
+    div.style.cssText = 'margin-top:16px;padding:16px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;font-family:monospace;font-size:12px;white-space:pre-wrap;max-height:300px;overflow-y:auto';
     div.textContent = csv;
-    const label = document.createElement('div');
-    label.style.cssText = 'font-size:13px;color:#6B7280;margin-bottom:8px;font-family:inherit';
-    label.textContent = 'Copy the text below and paste into a .csv file:';
-    const wrapper = document.createElement('div');
-    wrapper.appendChild(label);
-    wrapper.appendChild(div);
-    document.getElementById('results-content').appendChild(wrapper);
+    document.getElementById('results-content').appendChild(div);
   }
 }
 </script>
