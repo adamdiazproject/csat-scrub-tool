@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSAT Scrub Review Tool</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #F3F4F6; color: #111827; min-height: 100vh; }
+  a { color: inherit; }
+
+  /* Header */
+  .header { background: #4F46E5; color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p { font-size: 12px; opacity: .8; }
+
+  /* Tabs */
+  .tabs { display: flex; background: #fff; border-bottom: 1px solid #E5E7EB; padding: 0 24px; }
+  .tab { padding: 12px 18px; cursor: pointer; border: none; border-bottom: 2px solid transparent; background: none; font-size: 14px; color: #6B7280; font-weight: 400; font-family: inherit; }
+  .tab.active { border-bottom-color: #4F46E5; color: #4F46E5; font-weight: 600; }
+
+  /* Body */
+  .body { padding: 24px; max-width: 900px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Cards */
+  .card { background: #fff; border-radius: 10px; border: 1px solid #E5E7EB; padding: 20px; margin-bottom: 16px; }
+  .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .card .sub { font-size: 13px; color: #6B7280; margin-bottom: 16px; }
+
+  /* Form */
+  label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  input, textarea { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #E5E7EB; font-size: 14px; font-family: inherit; outline: none; }
+  input:focus, textarea:focus { border-color: #4F46E5; }
+  textarea { resize: vertical; min-height: 100px; }
+  .field { margin-bottom: 12px; }
+
+  /* Buttons */
+  .btn { padding: 8px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border: 1.5px solid #4F46E5; }
+  .btn-primary { background: #4F46E5; color: #fff; }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-outline { background: #fff; color: #4F46E5; }
+  .btn-danger { background: #fff; color: #DC2626; border-color: #DC2626; }
+  .btn-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+
+  /* Mode toggle */
+  .mode-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+
+  /* Notices */
+  .notice { border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; }
+  .notice-warn { background: #FFFBEB; border: 1px solid #D97706; color: #D97706; }
+  .notice-success { background: #ECFDF5; border: 1px solid #059669; color: #059669; }
+  .notice-danger { background: #FEF2F2; border: 1px solid #DC2626; color: #DC2626; }
+  .notice-info { background: #EEF2FF; border: 1px solid #4F46E5; color: #4F46E5; }
+
+  /* Status indicators */
+  .status-ok { font-size: 12px; color: #059669; margin-top: 6px; }
+  .status-row { display: flex; align-items: center; gap: 10px; font-size: 14px; margin-bottom: 6px; }
+
+  /* Results */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .stat-box { border-radius: 10px; padding: 14px 18px; }
+  .stat-box .num { font-size: 24px; font-weight: 700; }
+  .stat-box .lbl { font-size: 13px; }
+  .stat-primary { background: #EEF2FF; border: 1px solid #4F46E5; color: #4F46E5; }
+  .stat-success { background: #ECFDF5; border: 1px solid #059669; color: #059669; }
+  .stat-danger { background: #FEF2F2; border: 1px solid #DC2626; color: #DC2626; }
+
+  .result-card { background: #fff; border-radius: 10px; border: 1px solid #E5E7EB; padding: 16px; margin-bottom: 12px; }
+  .result-card.eligible { border-left: 4px solid #059669; }
+  .result-card.not-eligible { border-left: 4px solid #DC2626; }
+  .result-card.error-card { border-left: 4px solid #D97706; }
+  .result-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .result-id { font-weight: 700; font-size: 15px; }
+  .result-meta { font-size: 13px; color: #6B7280; margin-left: 10px; }
+  .result-reason { font-size: 14px; margin-bottom: 6px; }
+  .result-rule { font-size: 12px; color: #6B7280; }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .badge-eligible { background: #ECFDF5; color: #059669; }
+  .badge-not { background: #FEF2F2; color: #DC2626; }
+  .badge-error { background: #FFFBEB; color: #D97706; }
+
+  .empty-state { text-align: center; padding: 40px; color: #6B7280; }
+  .empty-state .icon { font-size: 40px; margin-bottom: 8px; }
+
+  .last-run { font-size: 12px; color: #6B7280; text-align: right; margin-top: 8px; }
+  .fetch-status { font-size: 13px; color: #6B7280; }
+
+  /* Insights */
+  .insights-text { font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:28px">🎯</div>
+  <div>
+    <h1>CSAT Scrub Review Tool</h1>
+    <p>AI-powered DSAT eligibility evaluator</p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('setup')">Setup</button>
+  <button class="tab" onclick="switchTab('review')">Review</button>
+  <button class="tab" onclick="switchTab('results')">Results</button>
+  <button class="tab" onclick="switchTab('insights')">Insights</button>
+</div>
+
+<div class="body">
+
+  <!-- SETUP -->
+  <div id="panel-setup" class="panel active">
+    <div class="card">
+      <h2>🔑 Zendesk Credentials</h2>
+      <p class="sub">Entered once per session — never stored or hardcoded. Re-enter each time you open the tool.</p>
+      <div class="field">
+        <label>Zendesk Email</label>
+        <input type="email" id="zd-email" placeholder="you@getflex.com" oninput="updateSetupStatus()" />
+      </div>
+      <div class="field">
+        <label>Zendesk API Token</label>
+        <input type="password" id="zd-token" placeholder="Paste your Zendesk API token..." style="font-family:monospace" oninput="updateSetupStatus()" />
+      </div>
+      <div id="zd-status"></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Exception Rules &amp; Procedures</h2>
+      <p class="sub">Your Flex DSAT Scrubbing rules are pre-loaded. Edit below or paste updated rules at any time.</p>
+      <div class="field">
+        <label>Rules (editable)</label>
+        <textarea id="rules-text" rows="14"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚡ Incident List <span style="font-weight:400;font-size:13px;color:#6B7280">(optional)</span></h2>
+      <p class="sub">Paste known incident IDs or notes. Tickets flagged as incident-related may qualify for scrubbing.</p>
+      <textarea id="incidents-text" rows="4" placeholder="INC-001, INC-002&#10;or paste full incident details..."></textarea>
+    </div>
+
+    <div class="card">
+      <h2>✅ Setup Status</h2>
+      <div id="setup-checklist"></div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div id="panel-review" class="panel">
+    <div id="review-warn-kb" class="notice notice-warn" style="display:none">⚠️ No rules loaded. Go to <strong>Setup</strong> first.</div>
+    <div id="review-warn-token" class="notice notice-warn" style="display:none">⚠️ No Zendesk credentials. Add them in <strong>Setup</strong> to enable ticket lookup.</div>
+
+    <div class="mode-toggle">
+      <button class="btn btn-primary" id="btn-single" onclick="setMode('single')">🎫 Single Ticket</button>
+      <button class="btn btn-outline" id="btn-batch" onclick="setMode('batch')">📦 Batch Review</button>
+    </div>
+
+    <div id="mode-single" class="card">
+      <h2>Single Ticket Review</h2>
+      <p class="sub">Enter a ticket ID or full Zendesk URL — the ticket will be fetched automatically.</p>
+      <input type="text" id="single-input" placeholder="5468253  or  https://getflex.zendesk.com/agent/tickets/5468253"
+        style="font-size:15px;padding:10px 14px" onkeydown="if(event.key==='Enter') runSingle()" />
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-review-single" onclick="runSingle()">🔍 Review Ticket</button>
+        <span class="fetch-status" id="single-status"></span>
+      </div>
+    </div>
+
+    <div id="mode-batch" class="card" style="display:none">
+      <h2>Batch Ticket Review</h2>
+      <p class="sub">One ticket ID or URL per line. Each will be fetched and reviewed automatically.</p>
+      <textarea id="batch-input" rows="8" placeholder="5468253&#10;5468254&#10;https://getflex.zendesk.com/agent/tickets/5468255"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-review-batch" onclick="runBatch()">🔍 Review All Tickets</button>
+        <span class="fetch-status" id="batch-status"></span>
+      </div>
+    </div>
+
+    <div id="review-error" class="notice notice-danger" style="display:none"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="panel-results" class="panel">
+    <div id="results-empty" class="card empty-state">
+      <div class="icon">📭</div>
+      <div>No results yet. Run a ticket review to see results here.</div>
+    </div>
+    <div id="results-content" style="display:none">
+      <div class="stats-grid">
+        <div class="stat-box stat-primary"><div class="num" id="stat-total">0</div><div class="lbl">Total Reviewed</div></div>
+        <div class="stat-box stat-success"><div class="num" id="stat-eligible">0</div><div class="lbl">Eligible for Scrub</div></div>
+        <div class="stat-box stat-danger"><div class="num" id="stat-not">0</div><div class="lbl">Not Eligible</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <button class="btn btn-danger" onclick="clearResults()">🗑 Clear Results</button>
+        <button class="btn btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+      <div id="results-list"></div>
+      <div class="last-run" id="last-run"></div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div id="panel-insights" class="panel">
+    <div id="insights-empty" class="card empty-state">
+      <div class="icon">📊</div>
+      <div>Review some tickets first to unlock insights.</div>
+    </div>
+    <div id="insights-content" style="display:none">
+      <div class="card">
+        <h2>📊 Current Dataset</h2>
+        <p class="sub" id="insights-sub"></p>
+        <button class="btn btn-primary" id="btn-insights" onclick="getInsights()">✨ Generate Insights &amp; Suggestions</button>
+      </div>
+      <div class="card" id="insights-result" style="display:none">
+        <h2>AI Insights</h2>
+        <div class="insights-text" id="insights-text"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+const PROXY = "https://zendesk-proxy.adam-167.workers.dev";
+const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
+const MODEL = "claude-sonnet-4-20250514";
+
+const DEFAULT_RULES = `DSAT SCRUBBING PROCESS – Flex
+
+VALID SCRUB SCENARIOS:
+
+1. Customer Did Not Get a Proper Chance to Interact
+- Email bounced, undelivered, or customer never saw reply and stated this in their DSAT
+- Customer claimed to have replied but no further messages received (verify thoroughly)
+- Agent has no touch on ticket; only auto-reassigned under solved/pending status
+- Blank tickets: abandoned calls with no content, SPAM, non-English inquiries where non-English macro was sent and customer never replied, tickets that only say "help" or have unclear/no issue, tickets with no Flex account attached where AV is needed
+- Phone Support: agent took all steps to contact customer but call did not go through and customer sent DSAT
+
+2. Customer Submitted a DSAT by Mistake
+- Customer clearly refers to another company or product unrelated to Flex
+- Customer follows up and states they left the rating by mistake (e.g. "Oops, sorry I meant to give 5 stars", "This wasn't meant for you")
+
+3. Customer DSAT is Misaligned
+- Customer leaves negative rating but feedback is overwhelmingly positive
+- Feedback directed at company/product but customer clearly states agent provided great service (verify ticket was resolved fully, SOP was followed)
+- DSAT due to communication preference only (e.g. wanted Spanish, wanted phone call) and agent followed SOP
+- AI-driven DSAT where customer complains about talking to AI — scrub ONLY if evidence is clear and unambiguous
+
+4. Exempted or Specialized Teams Only (agent must have handled case correctly)
+- Partner Care (PC), Eviction Prevention Force (EPF), Income Verification (IV), Disputes, AI Outreach, TL Escalation
+- Process/Product Limitations: known product/tool limitation and agent accurately explained or followed up
+- DSAT says "not resolved" but agent provided clear next steps, escalated as required, received no reply after following up
+- AI Outreach tickets where customer did not respond back
+
+DO NOT SCRUB – CANNOT BE REMOVED:
+
+1. DSAT Has No Comment or Blank Feedback
+- Cannot scrub by default without knowing cause
+- Exception: customer later replies on same ticket clarifying DSAT was a mistake
+
+2. Agent Contributed to the Negative Experience
+- Incorrect or misleading information
+- Failure to de-escalate frustrated customer
+- Unclear or dismissive messaging
+- Failure to follow SOPs or escalate when appropriate
+- Solving issue without replying or providing context when customer is upset
+- Cold/unprofessional language or tone mismatched with customer sentiment
+- Issue tagged as solved prematurely
+- Any Customer Impact or Account Verification/Regulation fails per FLEX QA Guidelines v6
+
+GENERAL RULES:
+- DSAT Scrubbing Cut-off: 1 week (7 days) from time DSAT was received
+- When in doubt: Do Not Scrub
+- Escalate unclear/borderline cases to Jaylin Quiamco or Tiffany Riccardelli
+- Every scrub must include: ticket ID, DSAT link, date of review, QA notes explaining rationale`;
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let results = [];
+let currentMode = 'single';
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.getElementById('rules-text').value = DEFAULT_RULES;
+updateSetupStatus();
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  [...document.querySelectorAll('.tab')].find(t => t.textContent.toLowerCase().includes(name))?.classList.add('active');
+  if (name === 'review') checkReviewWarnings();
+  if (name === 'results') renderResults();
+  if (name === 'insights') renderInsights();
+}
+
+// ─── Setup ────────────────────────────────────────────────────────────────────
+function updateSetupStatus() {
+  const email = document.getElementById('zd-email').value.trim();
+  const token = document.getElementById('zd-token').value.trim();
+  const rules = document.getElementById('rules-text').value.trim();
+  const zdStatus = document.getElementById('zd-status');
+  zdStatus.innerHTML = (email && token)
+    ? '<div class="status-ok">✅ Zendesk credentials set — ticket lookups enabled</div>'
+    : '';
+  const items = [
+    ['Exception Rules', rules],
+    ['Zendesk Email', email],
+    ['Zendesk API Token', token],
+    ['Incident List (optional)', document.getElementById('incidents-text').value.trim()],
+  ];
+  document.getElementById('setup-checklist').innerHTML = items.map(([lbl, val]) =>
+    `<div class="status-row"><span style="font-size:18px">${val ? '✅' : '⬜'}</span><span style="color:${val ? '#111' : '#6B7280'}">${lbl}</span></div>`
+  ).join('') + (rules && email && token
+    ? '<div class="notice notice-success" style="margin-top:12px">Ready! Head to the <strong>Review</strong> tab.</div>'
+    : '');
+}
+
+// ─── Mode toggle ──────────────────────────────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-single').style.display = mode === 'single' ? '' : 'none';
+  document.getElementById('mode-batch').style.display = mode === 'batch' ? '' : 'none';
+  document.getElementById('btn-single').className = 'btn ' + (mode === 'single' ? 'btn-primary' : 'btn-outline');
+  document.getElementById('btn-batch').className = 'btn ' + (mode === 'batch' ? 'btn-primary' : 'btn-outline');
+}
+
+// ─── Review warnings ──────────────────────────────────────────────────────────
+function checkReviewWarnings() {
+  const hasKb = !!document.getElementById('rules-text').value.trim();
+  const hasToken = !!document.getElementById('zd-token').value.trim() && !!document.getElementById('zd-email').value.trim();
+  document.getElementById('review-warn-kb').style.display = hasKb ? 'none' : '';
+  document.getElementById('review-warn-token').style.display = hasToken ? 'none' : '';
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function extractId(val) {
+  const t = val.trim();
+  const m = t.match(/tickets\/(\d+)/);
+  if (m) return m[1];
+  if (/^\d+$/.test(t)) return t;
+  return null;
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = msg ? '' : 'none';
+}
+
+async function fetchTicket(id) {
+  const res = await fetch(PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ticketId: id,
+      zdDomain: 'getflex',
+      zdEmail: document.getElementById('zd-email').value.trim(),
+      zdToken: document.getElementById('zd-token').value.trim(),
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Proxy error ${res.status}`);
+  const { ticket, comments } = data;
+  const convo = comments.map(c => `[${c.author_type}]: ${c.body}`).join('\n---\n');
+  return `Ticket ID: ${ticket.id}
+Subject: ${ticket.subject}
+Status: ${ticket.status}
+Tags: ${(ticket.tags || []).join(', ')}
+CSAT Score: ${ticket.satisfaction_rating?.score ?? 'N/A'}
+CSAT Comment: ${ticket.satisfaction_rating?.comment ?? 'None'}
+Created: ${ticket.created_at}
+
+--- Conversation ---
+${convo}`;
+}
+
+function buildSystem() {
+  return `You are a CSAT scrub eligibility reviewer for a customer support team.
+Determine if each DSAT should be scrubbed. Return ONLY valid JSON — no markdown, no preamble:
+{
+  "results": [{
+    "ticketId": "string",
+    "agentName": "string or Unknown",
+    "csatScore": number or null,
+    "eligible": true or false,
+    "verdict": "Eligible" or "Not Eligible",
+    "reason": "1-2 sentences",
+    "matchedRule": "rule name or None"
+  }]
+}
+
+EXCEPTION RULES:
+${document.getElementById('rules-text').value}
+
+INCIDENTS:
+${document.getElementById('incidents-text').value || 'None'}`;
+}
+
+async function analyze(ticketText) {
+  const res = await fetch(ANTHROPIC_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: MODEL, max_tokens: 1000,
+      system: buildSystem(),
+      messages: [{ role: 'user', content: `Review this ticket:\n\n${ticketText}` }],
+    }),
+  });
+  const data = await res.json();
+  const text = data.content.map(b => b.text || '').join('').replace(/```json|```/g, '').trim();
+  return JSON.parse(text);
+}
+
+function addResults(newItems) {
+  results.push(...newItems);
+  renderResults();
+  renderInsights();
+}
+
+// ─── Single review ────────────────────────────────────────────────────────────
+async function runSingle() {
+  const val = document.getElementById('single-input').value;
+  const id = extractId(val);
+  if (!id) { showError('review-error', 'Enter a valid ticket ID or URL.'); return; }
+  showError('review-error', '');
+  const btn = document.getElementById('btn-review-single');
+  const status = document.getElementById('single-status');
+  btn.disabled = true;
+  try {
+    status.textContent = `Fetching ticket #${id} from Zendesk...`;
+    const ticketText = await fetchTicket(id);
+    status.textContent = 'Analyzing against scrub rules...';
+    const parsed = await analyze(ticketText);
+    addResults(parsed.results);
+    switchTab('results');
+  } catch(e) {
+    showError('review-error', e.message || 'Failed to fetch or analyze ticket.');
+  }
+  btn.disabled = false;
+  status.textContent = '';
+}
+
+// ─── Batch review ─────────────────────────────────────────────────────────────
+async function runBatch() {
+  const lines = document.getElementById('batch-input').value.split('\n');
+  const ids = lines.map(extractId).filter(Boolean);
+  if (!ids.length) { showError('review-error', 'No valid ticket IDs found.'); return; }
+  showError('review-error', '');
+  const btn = document.getElementById('btn-review-batch');
+  const status = document.getElementById('batch-status');
+  btn.disabled = true;
+  const all = [];
+  for (let i = 0; i < ids.length; i++) {
+    const id = ids[i];
+    status.textContent = `Fetching #${id} (${i + 1}/${ids.length})...`;
+    try {
+      const ticketText = await fetchTicket(id);
+      const parsed = await analyze(ticketText);
+      all.push(...parsed.results);
+    } catch(e) {
+      all.push({ ticketId: id, eligible: false, verdict: 'Error', reason: e.message, matchedRule: 'N/A', agentName: 'Unknown', csatScore: null });
+    }
+  }
+  addResults(all);
+  btn.disabled = false;
+  status.textContent = '';
+  switchTab('results');
+}
+
+// ─── Results ──────────────────────────────────────────────────────────────────
+function renderResults() {
+  const empty = document.getElementById('results-empty');
+  const content = document.getElementById('results-content');
+  if (!results.length) { empty.style.display = ''; content.style.display = 'none'; return; }
+  empty.style.display = 'none'; content.style.display = '';
+  const eligible = results.filter(r => r.eligible);
+  const notEligible = results.filter(r => !r.eligible);
+  document.getElementById('stat-total').textContent = results.length;
+  document.getElementById('stat-eligible').textContent = eligible.length;
+  document.getElementById('stat-not').textContent = notEligible.length;
+  document.getElementById('last-run').textContent = 'Last run: ' + new Date().toLocaleString();
+  document.getElementById('results-list').innerHTML = results.map(r => `
+    <div class="result-card ${r.eligible ? 'eligible' : r.verdict === 'Error' ? 'error-card' : 'not-eligible'}">
+      <div class="result-header">
+        <div>
+          <span class="result-id">${r.ticketId}</span>
+          ${r.agentName && r.agentName !== 'Unknown' ? `<span class="result-meta">Agent: ${r.agentName}</span>` : ''}
+          ${r.csatScore ? `<span class="result-meta">CSAT: ${r.csatScore}/5</span>` : ''}
+        </div>
+        <span class="badge ${r.eligible ? 'badge-eligible' : r.verdict === 'Error' ? 'badge-error' : 'badge-not'}">
+          ${r.eligible ? '✓ Eligible' : r.verdict === 'Error' ? '⚠ Error' : '✗ Not Eligible'}
+        </span>
+      </div>
+      <div class="result-reason">${r.reason}</div>
+      ${r.matchedRule && r.matchedRule !== 'None' ? `<div class="result-rule">📌 Rule: ${r.matchedRule}</div>` : ''}
+    </div>`).join('');
+}
+
+function clearResults() {
+  results = [];
+  renderResults();
+  renderInsights();
+}
+
+function exportCSV() {
+  const header = 'Ticket ID,Agent,CSAT Score,Verdict,Matched Rule,Reason';
+  const rows = results.map(r =>
+    [r.ticketId, r.agentName, r.csatScore ?? '', r.verdict, r.matchedRule, `"${(r.reason || '').replace(/"/g, '""')}"`].join(',')
+  );
+  const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `csat-scrub-results-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ─── Insights ─────────────────────────────────────────────────────────────────
+function renderInsights() {
+  const empty = document.getElementById('insights-empty');
+  const content = document.getElementById('insights-content');
+  if (!results.length) { empty.style.display = ''; content.style.display = 'none'; return; }
+  empty.style.display = 'none'; content.style.display = '';
+  const e = results.filter(r => r.eligible).length;
+  document.getElementById('insights-sub').textContent =
+    `${results.length} tickets reviewed — ${e} eligible, ${results.length - e} not eligible`;
+}
+
+async function getInsights() {
+  const btn = document.getElementById('btn-insights');
+  const resultEl = document.getElementById('insights-result');
+  const textEl = document.getElementById('insights-text');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating insights...';
+  try {
+    const summary = JSON.stringify(results.map(r => ({ ticketId: r.ticketId, eligible: r.eligible, verdict: r.verdict, matchedRule: r.matchedRule, reason: r.reason })));
+    const res = await fetch(ANTHROPIC_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL, max_tokens: 1000,
+        messages: [{ role: 'user', content: `You are a customer support operations analyst. Based on these CSAT scrub review results, provide:
+1. A summary of patterns in scrub request types
+2. Breakdown of ticket types typically eligible vs not eligible
+3. 2-3 specific suggestions to expand or refine the exception criteria
+
+Current rules:
+${document.getElementById('rules-text').value}
+
+Results:
+${summary}
+
+Format with clear sections and headers. Be specific and actionable.` }],
+      }),
+    });
+    const data = await res.json();
+    textEl.textContent = data.content.map(b => b.text || '').join('');
+    resultEl.style.display = '';
+  } catch(e) {
+    textEl.textContent = 'Failed to generate insights. Try again.';
+    resultEl.style.display = '';
+  }
+  btn.disabled = false;
+  btn.textContent = '✨ Generate Insights & Suggestions';
+}
+</script>
+</body>
+</html>
